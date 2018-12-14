@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import time
 import os
 import copy
-from unet_model import Unet 
+from unet_model import UNet 
 from data_loader import HC18
 
 train_set = HC18('train')
@@ -20,10 +20,11 @@ print('Validation Set loaded')
 test_set = HC18('test')
 print('Test Set loaded')
 
-dataset = np.array([train_set, val_set])
+dataset = {0: train_set, 1:val_set}
 
-dataloaders = {x: torch.utils.data.Dataloader(dataset[x], batch_size=32, shuffle=True, num_workers=4)
+dataloaders = {x: torch.utils.data.DataLoader(dataset[x], batch_size=32, shuffle=True, num_workers=0)
 				for x in range(2)}
+# print(dataloaders[0])
 dataset_sizes = {x: len(dataset[x]) for x in range(2)}
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -35,7 +36,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
 	best_acc = 0.0
 
 	for epoch in range(num_epochs):
-		print('Epoch '+str(num_epochs)+' running')
+		print('Epoch '+str(epoch)+' running')
 
 		for phase in range(2):
 			if phase == 0:
@@ -46,14 +47,15 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
 
 			running_loss = 0.0
 			running_corrects = 0
-
-			for inputs, labels in dataloaders[phase]:
+			# print(len(dataloaders[phase]))
+			for i, Data in enumerate(dataloaders[phase]):
+				inputs, labels = Data 
 				inputs = inputs.to(device)
 				labels = labels.to(device)
 
 				optimizer.zero_grad()
 
-				with torch.set_grad_enabled(phase == 0)
+				with torch.set_grad_enabled(phase == 0):
 					outputs = model(inputs)
 					_, preds = torch.max(outputs, 1)
 					loss = criterion(outputs, labels)
@@ -78,13 +80,13 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=10):
 		print('End of epoch')
 	time_elapsed = time.time() - since
 	print('Training complete in {:.0f}m {:.0f}s'.format(
-        time_elapsed // 60, time_elapsed % 60))
-    print('Best val Acc: {:4f}'.format(best_acc))
-    model.load_state_dict(best_model_wts)
-    return model
+	    time_elapsed // 60, time_elapsed % 60))
+	print('Best val Acc: {:4f}'.format(best_acc))
+	model.load_state_dict(best_model_wts)
+	return model
 
 
-model = Unet()
+model = UNet(3, 3)
 model = model.to(device)
 criterion = nn.CrossEntropyLoss()
 model_optim = optim.SGD(model.parameters(), lr=1e-5, momentum=0.9)
