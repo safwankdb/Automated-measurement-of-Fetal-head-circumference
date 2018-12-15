@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 from unet_parts import *
 
+
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes):
         super(UNet, self).__init__()
@@ -19,6 +20,7 @@ class UNet(nn.Module):
         self.outc = outconv(64, n_classes)
 
     def forward(self, x):
+        x = x.float()
         x1 = self.inc(x)
         x2 = self.down1(x1)
         x3 = self.down2(x2)
