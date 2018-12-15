@@ -21,10 +21,10 @@ test_set = HC18('test')
 print('Test Set loaded')
 
 dataset = {0: train_set, 1:val_set}
-
+# print(len(dataset[1]))
 dataloaders = {x: torch.utils.data.DataLoader(dataset[x], batch_size=32, shuffle=True, num_workers=0)
 				for x in range(2)}
-# print(dataloaders[0])
+# print(len(dataloaders[0]))
 dataset_sizes = {x: len(dataset[x]) for x in range(2)}
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
