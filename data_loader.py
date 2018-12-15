@@ -5,7 +5,7 @@ from PIL import Image
 import glob
 
 X_size = (572, 572)
-y_size = (388, 388)
+y_size = (572, 572)
 
 
 class HC18(torch.utils.data.Dataset):
@@ -35,7 +35,7 @@ class HC18(torch.utils.data.Dataset):
                 X_size)).reshape(1, 572, 572)
 
             y = np.array(Image.open(self.y_train[idx]).convert(
-                'L').resize(y_size)).reshape(1, 388, 388)
+                'L').resize(y_size)).reshape(1, 572, 572)
 
             print(X.shape, y.shape)
             return torch.from_numpy(X).float(), torch.from_numpy(y).float()
@@ -45,7 +45,7 @@ class HC18(torch.utils.data.Dataset):
                 X_size)).reshape(1, 572, 572)
 
             y = np.array(Image.open(self.y_val[idx]).convert(
-                'L').resize(y_size)).reshape(1, 388, 388)
+                'L').resize(y_size)).reshape(1, 572, 572)
 
             return torch.from_numpy(X).float(), torch.from_numpy(y).float()
         elif self.data_type == "test":
@@ -54,7 +54,7 @@ class HC18(torch.utils.data.Dataset):
                 X_size)).reshape(1, 572, 572)
 
             y = np.array(Image.open(self.y_test[idx]).convert(
-                'L').resize(y_size)).reshape(1, 388, 388)
+                'L').resize(y_size)).reshape(1, 572, 572)
 
             return torch.from_numpy(X).float(), torch.from_numpy(y).float()
         else:
