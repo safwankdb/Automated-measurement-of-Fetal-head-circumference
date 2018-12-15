@@ -22,7 +22,7 @@ print('Test Set loaded')
 
 dataset = {0: train_set, 1: val_set}
 
-dataloaders = {x: torch.utils.data.DataLoader(dataset[x], batch_size=32, shuffle=True, num_workers=0)
+dataloaders = {x: torch.utils.data.DataLoader(dataset[x], batch_size=4, shuffle=True, num_workers=0)
                for x in range(2)}
 # print(dataloaders[0])
 
